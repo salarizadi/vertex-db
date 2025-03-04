@@ -1,0 +1,11 @@
+# Tests and examples
+#examples/
+
+# Source files
+*.ts
+!vertex-db.d.ts
+
+# Config files
+.gitignore
+.npmignore
+.gitattributes
