@@ -129,7 +129,7 @@ console.log(result.pagination); // Pagination info
 - `getOne(tableName)` - Get first matching record
 
 ### Query Methods
-- `where(field, value)` - Add WHERE condition
+- `where(field, value, operator)` - Add WHERE condition
 - `whereOperator(field, operator, value)` - Add WHERE condition with operator
 - `whereLike(field, pattern)` - Add LIKE condition
 - `whereIn(field, values)` - Add WHERE IN condition
@@ -153,7 +153,7 @@ MIT © [Salar Izadi](https://github.com/salarizadi)
 
 Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/salarizadi/vertex-db/issues).
 
-## Support 💖
+## Support 🌟
 
 Give a ⭐️ if this project helped you!
 
