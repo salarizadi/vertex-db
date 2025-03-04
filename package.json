@@ -1,7 +1,7 @@
 {
   "name": "@salarizadi/vertex-db",
   "version": "1.0.0",
-  "description": "A lightweight, powerful in-memory database for JavaScript applications with support for multiple data structures, relationships, transactions, and schema validation. Perfect for both browser and Node.js environments.",
+  "description": "A lightweight, powerful in-memory database for JavaScript/TypeScript applications with support for multiple data structures, relationships, transactions, and schema validation. Perfect for both browser and Node.js environments.",
   "main": "vertex-db.js",
   "types": "vertex-db.d.ts",
   "scripts": {
@@ -17,7 +17,14 @@
     "database",
     "query json",
     "javascript",
-    "typescript"
+    "typescript",
+    "lightweight",
+    "in-memory database",
+    "JavaScript/TypeScript",
+    "relationships",
+    "transactions",
+    "schema validation",
+    "browser and Node.js"
   ],
   "author": "salarizadi",
   "license": "MIT",

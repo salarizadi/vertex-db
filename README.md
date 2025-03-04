@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/npm/v/@salarizadi/vertex-db)
 ![Downloads](https://img.shields.io/npm/dt/@salarizadi/vertex-db)
 
-A lightweight, powerful in-memory database for JavaScript applications with support for multiple data structures, relationships, transactions, and schema validation. Perfect for both browser and Node.js environments.
+A lightweight, powerful in-memory database for JavaScript/TypeScript applications with support for multiple data structures, relationships, transactions, and schema validation. Perfect for both browser and Node.js environments.
 
 ## Features ✨
 
