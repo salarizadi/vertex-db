@@ -39,7 +39,7 @@
 
         /**
          * Enable or disable logging
-         * @param {boolean} enable
+         * @param {boolean or logger function} enable
          * @returns {VertexDB}
          */
         setLogging (enable) {
@@ -53,7 +53,10 @@
          * @param {Object} details
          */
         _log (operation, details) {
-            if (this._logger) {
+            if (typeof this._logger === 'function') {
+                this._logger(`[${new Date().toISOString()}] ${operation}: ${JSON.stringify(details)}`);
+            }
+            else if (this._logger) {
                 console.log(`[${new Date().toISOString()}] ${operation}:`, details);
             }
         }

@@ -1,6 +1,6 @@
 declare class VertexDb {
     constructor(config?: {
-        logging?: boolean;
+        logging?: boolean | (msg: string) => void;
         timestamps?: boolean;
         softDelete?: boolean;
     });
@@ -17,7 +17,7 @@ declare class VertexDb {
         IN: string;
     };
 
-    setLogging(enable: boolean): VertexDb;
+    setLogging(enable: boolean | (msg: string) => void): VertexDb;
     setTable(tableName: string, data?: any[], schema?: object): VertexDb;
     createTable(tableName: string, schema?: object): VertexDb;
     dropTable(tableName: string): VertexDb;
