@@ -5,7 +5,7 @@
   "main": "vertex-db.js",
   "types": "vertex-db.d.ts",
   "scripts": {
-    "test": "npm run test"
+    "test": "node examples/node.js"
   },
   "files": [
     "vertex-db.js",

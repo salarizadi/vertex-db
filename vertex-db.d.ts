@@ -21,6 +21,8 @@ declare class VertexDb {
     setTable(tableName: string, data?: any[], schema?: object): VertexDb;
     createTable(tableName: string, schema?: object): VertexDb;
     dropTable(tableName: string): VertexDb;
+    createTrigger(tableName: string, triggerName: string, trigger: ({ operation: 'insert' | 'update' | 'delete', OLD: object, NEW: object}) => boolean | void): VertexDb;
+    dropTrigger(tableName: string, triggerName: string): VertexDb;
     exists(tableName: string): boolean;
     addColumn(tableName: string, columnName: string, defaultValue?: any): VertexDb;
     dropColumn(tableName: string, columnName: string): VertexDb;

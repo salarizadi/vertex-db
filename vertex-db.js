@@ -24,6 +24,7 @@
 
         constructor (config = {}) {
             this._tables = new Map();
+            this._triggers = new Map();
             this._whereConditions = [];
             this._operator = 'AND';
             this._orderBy = null;
@@ -59,6 +60,26 @@
         }
 
         /**
+         * Fire triggers
+         * @param {string} tableName
+         * @param {string} operation
+         * @param {Object} OLD
+         * @param {Object} NEW
+         */
+        _trigger (tableName, operation, OLD = null, NEW = null) {
+            let shouldCommit = true
+            for (const [triggerName, trigger] of (this._triggers.get(tableName)?.entries() || [])) {
+                try {
+                    if (trigger({ operation, OLD, NEW }) === false) shouldCommit = false
+                }
+                catch (err) {
+                    this._log(`${operation} trigger`, { tableName, triggerName, error: err, OLD, NEW });
+                }
+            }
+            return shouldCommit
+        }
+
+        /**
          * Create or update a table with schema validation
          * @param {string} tableName
          * @param {Array} data
@@ -86,6 +107,38 @@
             this._log('setTable', {tableName, rowCount: data.length});
             return this;
         }
+
+        /**
+         * Create a new trigger
+         * @param {string} tableName
+         * @param {string} triggerName
+         * @param {function({operation: string, OLD: *, NEW: *}): void} trigger
+         */
+        createTrigger (tableName, triggerName, trigger) {
+            if (!this._tables.has(tableName)) {
+                throw new Error(`Table '${tableName}' does not exist`);
+            }
+            if (!this._triggers.has(tableName)) this._triggers.set(tableName, new Map);
+            if (this._triggers.get(tableName).has(triggerName)) {
+                throw new Error(`Trigger '${triggerName}' already exists`);
+            }
+            this._triggers.get(tableName).set(triggerName, trigger);
+            return this;
+        }
+
+        /**
+         * Drop a trigger
+         * @param {string} tableName
+         * @param {string} triggerName
+         */
+        dropTrigger (tableName, triggerName) {
+            if (!this._triggers.has(tableName) || !this._triggers.get(tableName).has(triggerName)) {
+                throw new Error(`Trigger '${triggerName} on table '${tableName}' does not exist`);
+            }
+            this._triggers.delete(tableName);
+            return this;
+        }
+            
 
         /**
          * Create a new table with schema
@@ -119,6 +172,8 @@
             }
 
             this._tables.delete(tableName);
+            this._triggers.delete(tableName);
+
             if (this._schemas) {
                 this._schemas.delete(tableName);
             }
@@ -505,7 +560,8 @@
                 newData.updated_at = new Date().toISOString();
             }
 
-            table.push(newData);
+            const shouldInsert = this._trigger(tableName, 'insert', null, newData)
+            if (shouldInsert) table.push(newData);
             this._log('insert', {tableName, data: newData});
             return this;
         }
@@ -552,10 +608,12 @@
 
             const table = this._tables.get(tableName);
             const updatedTable = table.map(row => {
-                const shouldUpdate = this._whereConditions.every(condition =>
+                let shouldUpdate = this._whereConditions.every(condition =>
                     row[condition.field] === condition.value
                 );
-                return shouldUpdate ? {...row, ...updateData} : row;
+                let newData = shouldUpdate ? {...row, ...updateData} : row
+                shouldUpdate = shouldUpdate && this._trigger(tableName, 'update', row, newData)
+                return shouldUpdate ? newData : row;
             });
 
             this._tables.set(tableName, updatedTable);
@@ -578,18 +636,21 @@
             if (this._softDelete) {
                 // Soft delete - just mark as deleted
                 const updatedTable = table.map(row => {
-                    const shouldDelete = this._whereConditions.every(condition =>
+                    let shouldDelete = this._whereConditions.every(condition =>
                         row[condition.field] === condition.value
                     );
+                    shouldDelete = shouldDelete && this._trigger(tableName, 'update', row, newData)
                     return shouldDelete ? {...row, deleted_at: new Date().toISOString()} : row;
                 });
                 this._tables.set(tableName, updatedTable);
             } else {
                 // Hard delete - remove the records
                 const filteredTable = table.filter(row => {
-                    return !this._whereConditions.every(condition =>
+                    let shouldDelete = this._whereConditions.every(condition =>
                         row[condition.field] === condition.value
                     );
+                    shouldDelete = shouldDelete && this._trigger(tableName, 'update', row, newData)
+                    return !shouldDelete
                 });
                 this._tables.set(tableName, filteredTable);
             }

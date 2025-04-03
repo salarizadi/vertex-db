@@ -14,7 +14,7 @@ async function testVertexDB() {
         console.log('=== Testing VertexDB Features ===\n');
 
         // 1. Create tables with schemas
-        console.log('1. Creating tables...');
+        console.log('1. Creating tables and triggers...');
 
         // Users table schema
         const userSchema = {
@@ -34,6 +34,8 @@ async function testVertexDB() {
 
         db.createTable('users', userSchema)
             .createTable('posts', postSchema);
+
+        db.createTrigger('users', 'log', ({operation, OLD, NEW}) => console.log('trigger:', {operation, OLD, NEW}))
 
         // 2. Insert sample data
         console.log('\n2. Inserting sample data...');
