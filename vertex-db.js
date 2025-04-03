@@ -642,7 +642,7 @@
                     let shouldDelete = this._whereConditions.every(condition =>
                         row[condition.field] === condition.value
                     );
-                    shouldDelete = shouldDelete && this._trigger(tableName, 'update', row, newData)
+                    shouldDelete = shouldDelete && this._trigger(tableName, 'delete', row, null)
                     return shouldDelete ? {...row, deleted_at: new Date().toISOString()} : row;
                 });
                 this._tables.set(tableName, updatedTable);
@@ -652,7 +652,7 @@
                     let shouldDelete = this._whereConditions.every(condition =>
                         row[condition.field] === condition.value
                     );
-                    shouldDelete = shouldDelete && this._trigger(tableName, 'update', row, newData)
+                    shouldDelete = shouldDelete && this._trigger(tableName, 'delete', row, null)
                     return !shouldDelete
                 });
                 this._tables.set(tableName, filteredTable);
